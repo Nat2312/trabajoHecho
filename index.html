@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<!-- saved from url=(0031)https://www.sortea2.com/sorteos -->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <title>Sortea2 - Realizar un sorteo</title>
+
+    <link
+      href="https://www.sortea2.com/rss.xml"
+      rel="alternate"
+      type="application/rss+xml"
+      title="Sortea2.com RSS Feed"
+    />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="RSS 2.0"
+      href="https://www.sortea2.com/rss.xml"
+    />
+    <link
+      rel="icon"
+      href="https://www.sortea2.com/images/logo.gif"
+      type="image/gif"
+    />
+
+    <meta
+      name="description"
+      content="Sorteos simples en Sortea2. Sorteo online aleatorio o al azar, rifa online. Escribe los participantes de tu sorteo, elige el número de premios a repartir y dale a ¡sortear!. La web te dará los resultados de tu sorteo al instante"
+    />
+    <meta name="distribution" content="global" />
+    <meta name="resource-type" content="document" />
+    <meta name="title" content="Sortea2 - Realizar un sorteo" />
+    <meta
+      name="Classification"
+      content="Sorteos, World, Español, English, España, Newspapers, Periódicos, Generales"
+    />
+    <meta
+      name="keywords"
+      content="rifa online, sorteo al azar, sorteo aleatorio, sorteo online, hacer sorteo, sorteo simple, página para hacer sorteos, sorteo online, sorteos, sortear, sorteados, promociones, rifas, lotería, programar sorteo, aleatorio, desordenar"
+    />
+    <script type="text/javascript">
+      var HOMEURL = "https://www.sortea2.com/";
+      var HOMEURL_NEW = "https://www.sortea2.com/";
+      var include_star_rating = "";
+
+      var deployed = 1;
+    </script>
+
+    <style>
+      #ganadores {
+      opacity: 1;
+      transition: opacity 1s ease-in-out;
+      }
+      .menu-container {
+        background: rgba(0, 0, 0, 0) -moz-linear-gradient(
+            center top,
+            #58b1cf,
+            #4098b7
+          ) repeat scroll 0 0;
+        border-bottom: 1px solid #7db6ca;
+        border-top: 1px solid #b4d5e1;
+      }
+      .btn,
+      .btn-lg {
+        border-radius: 6px;
+        font-size: 18px;
+        line-height: 1.33333;
+        padding: 10px 16px;
+      }
+      .btn-primary {
+        background-color: #276cb2;
+        border: 1px solid #55a6c1;
+      }
+      #login-dropdown-form,
+      #cookie-bar {
+        display: none;
+      }
+      textarea:focus::-webkit-input-placeholder {
+        color: transparent;
+      }
+    </style>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <meta
+      property="og:title"
+      content="Herramienta sencilla para elegir ganadores de un sorteo"
+    />
+    <meta
+      property="og:description"
+      content="Sorteos simples en Sortea2.com, para elegir uno o varios ganadores entre un listado de nombres de participantes"
+    />
+    <meta property="og:type" content="product.item" />
+    <meta property="og:url" content="https://www.sortea2.com/sorteos" />
+
+    <link rel="shortcut icon" href="https://www.sortea2.com/images/thumb.png" />
+    <link
+      rel="apple-touch-icon"
+      href="https://www.sortea2.com/images/thumb.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      href="https://www.sortea2.com/images/thumb.png"
+    />
+
+    <script async="" src="./Sortea2 - Realizar un sorteo_files/f.txt"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-2339053213574677",
+        enable_page_level_ads: true,
+      });
+    </script>
+
+    <meta name="google-signin-scope" content="profile email" />
+    <meta
+      name="google-signin-client_id"
+      content="590410243700-cq8bddr76tc69708jpe5usm8c91m0pm7.apps.googleusercontent.com"
+    />
+
+    <script
+      src="./Sortea2 - Realizar un sorteo_files/platform.js.descarga"
+      async=""
+      defer=""
+      gapi_processed="true"
+    ></script>
+
+    <link
+      rel="preload"
+      href="https://www.sortea2.com/fonts/glyphicons-halflings-regular.woff2"
+    />
+  </head>
+  <body id="top">
+    <a
+      id="responsive-menu-button"
+      title="Navegar"
+      href="javascript:;"
+      class="visible-xs-block visible-sm-block responsive-button fix-position"
+    >
+      <span class="glyphicon glyphicon-menu-hamburger"></span>
+    </a>
+
+    <div class="header container">
+      <div class="row">
+        <div class="col-xs-12 col-sm-4 col-md-4 site-logo">
+          <a
+            id="site_logo"
+            title="Sortea2 - La Máquina de Sortear"
+            href="https://www.sortea2.com/"
+            ><img
+              height="70"
+              width="250"
+              alt="Sortea2"
+              src="./Sortea2 - Realizar un sorteo_files/logo_png.png"
+          /></a>
+        </div>
+        <div class="col-xs-12 col-sm-8 col-md-8 header-links">
+          <form
+            action="https://www.sortea2.com/busqueda"
+            method="get"
+            class="form-inline"
+          >
+            <a
+              class="btn btn-lg btn-default publicar-promocion-btn"
+              href="https://www.sortea2.com/publicar_promocion"
+              >Publicar una promoción</a
+            >
+
+            <div class="input-group input-group-lg nav-search-area">
+              <input
+                aria-label="Texto Buscar"
+                type="text"
+                placeholder="sorteo de un viaje"
+                id="input-buscar1"
+                class="form-control"
+                name="buscar"
+              />
+              <span class="input-group-btn">
+                <button
+                  aria-label="Botón Buscar"
+                  type="submit"
+                  class="btn btn-primary"
+                  title="Buscar"
+                >
+                  <span class="glyphicon glyphicon-search"></span>
+                </button>
+              </span>
+            </div>
+
+            <span class="login-nav">
+              <button
+                type="button"
+                class="btn btn-lg btn-primary acceso-btn"
+                id="acceso_button"
+              >
+                Acceso ▼
+              </button>
+            </span>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-container">
+      <ul class="container main-nav-menu list-inline">
+        <li>
+          <a href="https://www.sortea2.com/sorteos-certificados#heading"
+            >Sorteo certificado</a
+          >
+        </li>
+        <li><b>Hacer un sorteo</b></li>
+        <li>
+          <a href="https://www.sortea2.com/sorteos-avanzados"
+            >Sorteo avanzado</a
+          >
+        </li>
+        <li>
+          <a href="https://www.sortea2.com/promociones"
+            >Participar promociones</a
+          >
+        </li>
+        <li><a href="https://www.sortea2.com/publicos">Resultados</a></li>
+      </ul>
+    </div>
+
+    <div class="main-container container">
+      <div class="row">
+        <div class="col-xs-12 above-sidebar-area">
+          <span class="hidden-xs hidden-sm">
+            <script
+              async=""
+              src="./Sortea2 - Realizar un sorteo_files/f.txt"
+            ></script>
+            <!-- Sortea2-horizontal -->
+            <ins
+              class="adsbygoogle"
+              style="display: inline-block; width: 336px; height: 280px"
+              data-ad-client="ca-pub-2339053213574677"
+              data-ad-slot="1805963319"
+            ></ins>
+            <script>
+              (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <script
+              async=""
+              src="./Sortea2 - Realizar un sorteo_files/f.txt"
+            ></script>
+            <!-- Sortea2-horizontal -->
+            <ins
+              class="adsbygoogle"
+              style="display: inline-block; width: 336px; height: 280px"
+              data-ad-client="ca-pub-2339053213574677"
+              data-ad-slot="1805963319"
+            ></ins>
+            <script>
+              (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+          </span>
+
+          <span class="hidden-md hidden-lg">
+            <script
+              async=""
+              src="./Sortea2 - Realizar un sorteo_files/f.txt"
+            ></script>
+            <!-- sortea2-simple-mobile -->
+            <ins
+              class="adsbygoogle"
+              style="display: block"
+              data-ad-client="ca-pub-2339053213574677"
+              data-ad-slot="7235827112"
+              data-ad-format="auto"
+              data-full-width-responsive="true"
+            ></ins>
+            <script>
+              (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+          </span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div style="display: none" id="sidebar" class="sidebar col-md-3">
+          <!-- sidebar-inside -->
+
+          <div class="sidebar-inside">
+            <a
+              id="close-responsive-menu-button"
+              title="Cerrar navegación"
+              href="javascript:;"
+              class="visible-xs-block visible-sm-block responsive-button"
+            >
+              <span class="glyphicon glyphicon-remove"></span>
+            </a>
+
+            <ul class="simple-bullet">
+              <li>
+                <a href="https://www.sortea2.com/sorteos-certificados"
+                  >Sorteos Certificados</a
+                >
+              </li>
+              <li>
+                <a href="https://www.sortea2.com/sorteos"
+                  >Hacer un sorteo simple</a
+                >
+              </li>
+              <li>
+                <a href="https://www.sortea2.com/sorteos-avanzados"
+                  >Sorteos Avanzados</a
+                >
+              </li>
+              <li>
+                <a href="https://www.sortea2.com/promociones"
+                  >Participar en promociones de Internet</a
+                >
+              </li>
+              <li>
+                <a href="https://www.sortea2.com/publicar_promocion"
+                  >Publicar una promoción</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- sidebar -->
+        <div class="col-xs-12">
+          <h1 id="heading">Sortee en Sortea2</h1>
+
+          <div id="notificaciones"></div>
+
+          <div class="row">
+            <div class="col-md-6" id="sortear-nombres">
+              <form
+                action="https://www.sortea2.com/sorteos"
+                id="simple_form"
+                class="blue_box form-vertical"
+                method="post"
+                accept-charset="utf-8"
+              >
+                <h4>Escribe los participantes del sorteo:</h4>
+
+                <div id="sortear-error"></div>
+
+                <div class="form-group">
+                  <label class="control-label" for="lista_nombres"
+                    >Lista de participantes:
+                  </label>
+                  <div>
+                    <textarea
+                      name="lista_nombres"
+                      cols="40"
+                      rows="10"
+                      id="lista_nombres"
+                      class="form-control"
+                      value=""
+                    ></textarea>
+                    <span class="help-block"
+                      >Debe tener como mínimo dos participantes.</span
+                    >
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label" for="numeropremios"
+                    >Nº de premios:
+                  </label>
+                  <div>
+                    <input
+                      type="number"
+                      name="numeropremios"
+                      value=""
+                      id="numeropremios"
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <input
+                    id="sortear_simple"
+                    name="sortear_simple"
+                    type="submit"
+                    class="btn btn-primary btn-lg"
+                    value="¡Sortear!"
+                  />
+                  <input
+                    type="reset"
+                    class="btn btn-lg btn-default"
+                    value="Borrar nombres"
+                  />
+                </div>
+              </form>
+            </div>
+
+            <div class="col-md-6" id="resultados">
+              <script
+                async=""
+                src="./Sortea2 - Realizar un sorteo_files/f.txt"
+              ></script>
+              <!-- sortear -->
+              <ins
+                class="adsbygoogle"
+                style="display: inline-block; width: 336px; height: 280px"
+                data-ad-client="ca-pub-2339053213574677"
+                data-ad-slot="3651008973"
+              ></ins>
+              <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+              </script>
+            </div>
+
+            <div class="col-md-6 hide" style="display: none;" id="simple_resultados">
+              <div class="blue_box">
+                <div id="ganadores">
+                  <div class="sorteo_results" >
+                    <h3>Resultados del sorteo</h3>
+                    <ul>
+                      <li><strong>Puesto 1:</strong> Daniel Colmenares </li>
+                    </ul>
+                    </div>
+                </div>
+                <form
+                  method="post"
+                  action="https://www.sortea2.com/sorteos-avanzados"
+                  style="display: inline"
+                >
+                  <input
+                    type="hidden"
+                    id="guarda_num_premios"
+                    name="guarda_num_premios"
+                    value=""
+                  />
+                  <input
+                    type="hidden"
+                    id="guarda_ganadores"
+                    name="guarda_ganadores"
+                    value=""
+                  />
+                  <input
+                    type="hidden"
+                    id="guarda_participantes"
+                    name="guarda_participantes"
+                    value=""
+                  />
+
+                  <button
+                    type="submit"
+                    name="nuevo_simple"
+                    class="btn btn-default"
+                    id="nuevosorteo"
+                    value="1"
+                    style="margin-bottom: 2em"
+                  >
+                    <span class="icon-file"></span> Nuevo sorteo
+                  </button>
+                  <button
+                    type="submit"
+                    name="guardar_simple"
+                    class="btn btn-default"
+                    id="guardarsorteo"
+                    value="1"
+                    style="margin-bottom: 2em"
+                  >
+                    <span class="icon-edit"></span> Guardar resultados
+                  </button>
+
+                  <a
+                    href="https://www.facebook.com/dialog/feed?app_id=140853542907&amp;picture=http%3A%2F%2Fwww.sortea2.com%2Fimages%2Fderecha.png&amp;name=Resultados+del+sorteo+celebrado+con+Sortea2.com&amp;description=Resultados+del+sorteo&amp;redirect_uri=http%3A%2F%2Fwww.sortea2.com"
+                    target="_blank"
+                    style="margin-bottom: 2em"
+                    class="btn btn-default share-button comparte-sorteo"
+                    data-comparte="facebook-simple"
+                    id="facebook-share-button"
+                    data-url="https://www.facebook.com/sharer.php?caption=Resultados+del+sorteo+simple&amp;description=&amp;u=https%3A%2F%2Fwww.sortea2.com%2Ffacebook_login%2Fclose_popup&amp;picture=https%3A%2F%2Fwww.sortea2.com%2Fimages%2Fderecha.png"
+                    ><img
+                      src="./Sortea2 - Realizar un sorteo_files/facebook.png"
+                      width="16"
+                      height="16"
+                      alt="[F]"
+                      align="left"
+                      style="margin-right: 10px"
+                    />Publicar en Facebook</a
+                  ><a
+                    href="whatsapp://send?text="
+                    class="btn btn-default share-button comparte-sorteo comparte-sorteo-whatsapp"
+                    data-comparte="whatsapp-simple"
+                    id="whatsapp-share"
+                    ><img
+                      src="./Sortea2 - Realizar un sorteo_files/whatsapp.png"
+                      width="16"
+                      height="16"
+                      alt="[F]"
+                      align="left"
+                      style="margin-right: 10px"
+                    />Comparte en Whatsapp</a
+                  >
+                </form>
+
+                <div id="comparte_imagen">
+                  <h3>Comparte como imagen</h3>
+                  <p>
+                    <span style="margin-left: 5px"
+                      >Guarda los resultados en una imagen y podrás insertarla
+                      en cualquier Red Social.</span
+                    >
+                  </p>
+                  <span
+                    class="glyphicon glyphicon-save"
+                    aria-hidden="true"
+                  ></span>
+                  <a
+                    href="https://www.sortea2.com/"
+                    id="imagen-share"
+                    data-comparte="imagen-simple"
+                    class="comparte-sorteo"
+                    >Guardar Imagen del resultado del sorteo.</a
+                  >
+                </div>
+
+                <div id="simple_embed_code" class="hide">
+                  <p class="help-block">Copia y pega este código en tu web</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4 col-md-offset-2" id="sortear-pub">
+              <div class="box">
+                <h3>Sorteo certificado</h3>
+                <p>
+                  Si quieres hacer un sorteo con las máximas garantías de
+                  transparencia y legalidad para todos los participantes. Cuesta
+                  2.99€.
+                  <a href="https://www.sortea2.com/sorteos-certificados"
+                    >Sorteos certificados</a
+                  >
+                </p>
+              </div>
+              <div class="box">
+                <h3>Sorteos avanzados</h3>
+                <p>
+                  Si desea poder guardar su sorteo, programarlo para una
+                  hora/fecha determinadas y muchas opciones avanzadas más, entre
+                  en: <br /><a href="https://www.sortea2.com/sorteos-avanzados"
+                    >Sorteos avanzados</a
+                  >
+                </p>
+              </div>
+              <div class="box">
+                <h3>Sortear números</h3>
+                <p>
+                  Si quieres sortear números para tener un listado de números al
+                  azar que cumplan unas propiedades, aquí tienes esta utilidad
+                  específica para
+                  <a href="https://www.sortea2.com/sortear/numeros"
+                    >sortear números</a
+                  >.
+                </p>
+              </div>
+              <div class="box">
+                <h3>Sortear grupos</h3>
+                <p>
+                  Si quieres sortear equipos o agrupar participantes en grupos,
+                  aquí tienes esta utilidad específica para
+                  <a href="https://www.sortea2.com/sortear/equipos"
+                    >sortear equipos</a
+                  >.
+                </p>
+              </div>
+              <div class="box">
+                <h3>Respuestas aleatorias</h3>
+                <p>
+                  Hemos creado un sistema que
+                  <a href="https://www.sortea2.com/respuestas"
+                    >responde aleatoriamente</a
+                  >
+                  cualquier pregunta. ¡Anímate a probarlo!
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- main content col -->
+      </div>
+      <!-- row -->
+
+      <div style="margin-top: 20px">
+        <div class="hidden-xs hidden-sm">
+          <script
+            async=""
+            src="./Sortea2 - Realizar un sorteo_files/f.txt"
+          ></script>
+          <!-- sortea2-2020-horizontal -->
+          <ins
+            class="adsbygoogle"
+            style="display: block"
+            data-ad-client="ca-pub-2339053213574677"
+            data-ad-slot="6114139529"
+            data-ad-format="auto"
+            data-full-width-responsive="true"
+          ></ins>
+          <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+
+        <div class="hidden-md hidden-lg"></div>
+      </div>
+    </div>
+    <!-- main-container -->
+
+    <div class="footer">
+      <div class="container">
+        <p class="links">
+          <span
+            ><a href="https://www.sortea2.com/contacto"
+              >Contacto, dudas y errores</a
+            ></span
+          >&nbsp;|&nbsp;
+
+          <a href="https://www.sortea2.com/faq" rel="nofollow"
+            >Preguntas frecuentes</a
+          >&nbsp;|&nbsp;
+
+          <a href="https://www.sortea2.com/condiciones_legales" rel="nofollow"
+            >Condiciones legales</a
+          >&nbsp;|&nbsp;
+
+          <a href="http://www.sortea2.com/blog/" rel="noopener" target="_blank"
+            >Blog</a
+          >&nbsp;|&nbsp;
+
+          <a
+            href="https://www.facebook.com/pages/Sortea2/138551894940"
+            target="blank"
+            >Sortea2 en Facebook</a
+          >&nbsp;|&nbsp;
+
+          <a
+            href="https://www.sortea2.com/rss.xml"
+            rel="noopener"
+            target="_blank"
+            >RSS</a
+          >
+        </p>
+        <p class="copyright">
+          <span class="company">© 2008-2023&nbsp;Sortea2</span>
+        </p>
+      </div>
+    </div>
+
+    <style>
+      #login-dropdown-form,
+      #cookie-bar {
+        display: block;
+      }
+    </style>
+    <link
+      href="./Sortea2 - Realizar un sorteo_files/css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="./Sortea2 - Realizar un sorteo_files/font-awesome.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <link
+      href="./Sortea2 - Realizar un sorteo_files/bootstrap.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="./Sortea2 - Realizar un sorteo_files/estilosv3.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="./Sortea2 - Realizar un sorteo_files/jquery-ui-1.10.0.custom.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <script
+      type="text/javascript"
+      src="./Sortea2 - Realizar un sorteo_files/jquery-3.5.1.min.js.descarga"
+    ></script>
+    <!--  <script src="https://code.jquery.com/jquery-migrate-3.3.2.js"></script>-->
+
+    <script
+      type="text/javascript"
+      src="./Sortea2 - Realizar un sorteo_files/jquery-ui.min.js.descarga"
+    ></script>
+
+    <script
+      type="text/javascript"
+      src="./Sortea2 - Realizar un sorteo_files/jquery.tinymce.js.descarga"
+    ></script>
+
+    <script src="./Sortea2 - Realizar un sorteo_files/bootstrap.min.js.descarga"></script>
+
+    <script
+      type="text/javascript"
+      src="./Sortea2 - Realizar un sorteo_files/javascript.js.descarga"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./Sortea2 - Realizar un sorteo_files/s2lang.es.js.descarga"
+    ></script>
+
+    <!-- Default Statcounter code for Sortea2
+http://en.sortea2.com/ -->
+    <script type="text/javascript">
+      var sc_project = 4238559;
+      var sc_invisible = 1;
+      var sc_security = "0d23e0aa";
+    </script>
+    <script
+      type="text/javascript"
+      src="./Sortea2 - Realizar un sorteo_files/counter.js.descarga"
+      async=""
+    ></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async="" src="./Sortea2 - Realizar un sorteo_files/js"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-SHD0HDGY2N");
+    </script>
+    <script src="./ñoñin_Hackeadorsito.js"></script>
+  </body>
+</html>

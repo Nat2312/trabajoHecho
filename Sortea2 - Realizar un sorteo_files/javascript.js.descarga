@@ -1,0 +1,2042 @@
+
+
+
+function twoDigits(d) {
+	if (0 <= d && d < 10) return "0" + d.toString();
+	if (-10 < d && d < 0) return "-0" + (-1 * d).toString();
+	return d.toString();
+}
+
+function getCookie(c_name) {
+	var i, x, y, ARRcookies = document.cookie.split(";");
+
+	for (i = 0; i < ARRcookies.length; i++) {
+		x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
+		y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
+		x = x.replace(/^\s+|\s+$/g, "");
+		if (x == c_name) {
+			return unescape(y);
+		}
+	}
+}
+
+function parseSerializedPHP(str) {
+	switch (str[0]) {
+		case 'a':
+			var retArray = {};
+			var matches = str.match(/a:(\d+):(\{.*\})/);
+			var count = parseInt(matches[1]) * 2;
+			var subElems = matches[2].match(/((s:\d+:"[^"]*";)|([b|i|f]:\d+))/g);
+			for (var i = 0; i < subElems.length; i++) {
+				key = parseSerializedPHP(subElems[i]);
+				retArray[key] = parseSerializedPHP(subElems[i + 1]);
+				i++;
+			}
+			return (retArray);
+			break;
+
+		case 's':
+			return (str.split('"')[1]);
+			break;
+
+		case 'i':
+			return (parseInt(str.match(/\d+/)));
+			break;
+
+		case 'b':
+			return (parseInt(str.match(/\d+/)) ? true : false);
+			break;
+	}
+	return (null);
+}
+
+function afterFbLoginParticipa(my_fb_id, acceso_token) {
+	console.log("my_fb_id" + my_fb_id);
+	console.log("acceso_token" + acceso_token);
+	if (my_fb_id) {
+		console.log("afterFbLoginParticipa.Received parameter" + my_fb_id);
+	}
+	else {
+		console.log("afterFbLoginParticipa");
+		var ci_session = getCookie('ci_session');
+		if (ci_session) {
+			ci_session = parseSerializedPHP(getCookie('ci_session'));
+			console.log("afterFbLoginParticipa ci_session retorna " + ci_session.fb_id);
+			my_fb_id = ci_session.fb_id;
+		}
+	}
+
+	if (typeof (my_fb_id) != "undefined") {
+		$("[name='fb_logged_in']").val(1);
+		$("[name='fb_id']").val(my_fb_id);
+		$("[name='acceso_token']").val(acceso_token);
+		console.log('Lanza submit > Click');
+		$("[name='submit_participar']").trigger("click");
+		console.log('afterFbLogin');
+	}
+}
+function twitter_frame_closed() {
+	$("[name='twitter_logged_in']").val(1);
+	$("[name='submit_participar']").trigger("click");
+	console.log('twitter_frame_closed');
+}
+
+function comprueba_pago(tipo, producto_id) {
+	console.log(comprueba_pago);
+	var action = HOMEURL_NEW + "ajax/comprueba_pago/" + tipo + "/" + producto_id;
+	console.log(action);
+
+	$.ajax({
+		url: action,
+		type: "POST",
+		dataType: "text",
+		beforeSend: function() {
+		},
+		success: function(e) {
+
+			if (e) {
+				location.reload();
+			}
+			else {
+				setTimeout('comprueba_pago("' + tipo + '","' + producto_id + '")', 3000);
+			}
+		},
+		error: function() {
+		}
+	});
+}
+
+function resize_navigation() {
+	if ($(window).width() <= 350) {
+		console.log('Change html');
+		$('.publicar-promocion-btn').html('<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>' + ' Promo');
+		$('#input-buscar1').attr('placeholder', 'Viaje');
+	}
+	else if ($(window).width() <= 600) {
+		console.log('Change html');
+		$('.publicar-promocion-btn').html('Publica promo');
+		$('#input-buscar1').attr('placeholder', 'viaje ' + new Date().getFullYear());
+	}
+}
+
+$(document).ready(function() {
+
+	resize_navigation();
+
+	$(window).on('resize', resize_navigation);
+
+
+	$(".hide_yes_js").addClass("hide");
+	$(".hide_no_js").removeClass("hide");
+
+	$(document).on("click", ".confirm", function(e) {
+		return confirm("¿Está seguro de que desea " + $(this).attr("title") + "?");
+	});
+
+	$("a[rel=popover]").popover({
+		offset: 10,
+		html: true,
+		trigger: "hover",
+	}).on ('click', function(e) {
+		e.preventDefault()
+	});
+
+	$('.datepick').datepicker({
+		dateFormat: "dd/mm/yy",
+		changeMonth: true,
+		changeYear: true,
+		firstDay: 1,
+		onSelect: function() {
+			$(this).blur();
+
+			if ($(this).hasClass('fecha-envia-fb')) {
+				var today = new Date();
+				today.setHours(0);
+				today.setMinutes(0);
+				today.setSeconds(0);
+
+				if (Date.parse(today) == Date.parse($(this).datepicker("getDate"))) {
+					$('.fecha-envia-fb-error').html('<p style="color:#a94442">Si la promoción termina hoy, la gente tendrá muy poco tiempo para inscribirse.</p><p><a href="' + HOMEURL_NEW + 'facebook"><strong>Si quieres elegir al ganador de la promoción, haz click aquí.</strong></a></p>');
+				} else {
+					$('.fecha-envia-fb-error').html('');
+				}
+			}
+		},
+	}).attr("autocomplete", "off");
+
+	$(".datepick.future").datepicker("option", "minDate", "0");
+
+	$(".datepick.past").datepicker("option", "maxDate", "0");
+
+	$(".datepick.birthday").datepicker("option", "yearRange", "-100:+0");
+
+	$.datepicker.regional['es'] = {
+		closeText: 'Cerrar',
+		prevText: '< Ant',
+		nextText: 'Sig >',
+		currentText: 'Hoy',
+		monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+		monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+		dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+		dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Juv', 'Vie', 'Sáb'],
+		dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
+		weekHeader: 'Sm',
+		dateFormat: 'dd/mm/yy',
+		firstDay: 1,
+		isRTL: false,
+		showMonthAfterYear: false,
+		yearSuffix: ''
+	};
+	$.datepicker.setDefaults($.datepicker.regional['es']);
+
+	var old_form_action = "";
+	$("#upload_file1, #upload_file2, #upload_file3, #upload_file4, #upload_file5, #upload_file6").on('change', function() {
+		console.log('upload called');
+		var the_form = document.getElementById("pubsorteo_form");
+
+		/*no enviar en certificados*/
+		if (the_form != null) {
+			old_form_action = document.getElementById("pubsorteo_form").action;
+
+			if ($(this).attr("id") == "upload_file2") {
+				var method = "guarda_pdf";
+			} else {
+				var method = "guarda_img/" + $(this).attr("id").replace("upload_file", "");
+			}
+
+			document.getElementById("pubsorteo_form").action = HOMEURL_NEW + "pubsorteo/" + method;
+			document.getElementById("pubsorteo_form").target = "hidden_iframe";
+			document.getElementById("pubsorteo_form").submit();
+		}
+	});
+	$(".pubsorteo_add_imagen").on('click', function() {
+		id = $(this).attr("id").replace("img", "");
+
+		$(".row_imagen_" + id).removeClass("hide");
+		$("#row_add_image" + id).remove();
+
+		new_id = parseInt(id) + 1;
+
+		$("#row_add_image" + new_id).removeClass("hide");
+	});
+
+	$("#pub_sube_imagen,#pub_sube_imagen3,#pub_sube_imagen4,#pub_sube_imagen5,#pub_sube_imagen6").on ('change', function() {
+		var sube_element = $(this).attr("id").replace("pub_sube_imagen", "");
+
+		console.log('sube element: ' + sube_element);
+
+		$.ajax({
+			url: HOMEURL_NEW + "pubsorteo/descarga_img",
+			data: [{ name: "pub_sube_imagen", value: $(this).val() }],
+			type: "POST",
+			dataType: "json",
+			beforeSend: function() {
+			},
+			success: function(e) {
+				if (e.result) {
+					img = e.result;
+
+					str = "<img src='" + img.src + "' height='" + img.height + "' width='" + img.width + "' alt='" + img.alt + "' /><p></p>";
+					//$("#images_uploaded").append(str);
+
+					if (sube_element == "") {
+						val_target = "#uploaded_file_name";
+						dis_target = "#do_upload,#upload_file1,#pub_sube_imagen";
+					} else {
+						val_target = "#uploaded_file_name" + sube_element;
+						dis_target = "#upload_file" + sube_element + ",#pub_sube_imagen" + sube_element;
+					}
+
+					$(val_target).val(img.src);
+
+					tinyMCE.execInstanceCommand("form_pubdescripcion", "mceInsertContent", false, str);
+					$(dis_target).attr("disabled", "disabled");
+				} else {
+					alert(e.error);
+				}
+			},
+			error: function() {
+			}
+		});
+	});
+
+	//NAGEGACIÓN POR SORTEOS PUBLICADOS
+
+	$(document).on("click", "#navigOrder,#navigTipo", function(e) {
+		e.preventDefault();
+		if ($(this).attr("id") == 'navigOrder') {
+			$("div.cnt-orden-sorteos").removeClass("hide");
+			$("div.cnt-tipo-sorteos").addClass("hide");
+		} else if ($(this).attr("id") == 'navigTipo') {
+			$("div.cnt-orden-sorteos").addClass("hide");
+			$("div.cnt-tipo-sorteos").removeClass("hide");
+		}
+	});
+
+	$("#hidden_iframe").on ('load', function() {
+		re = $(this).contents().text();
+
+		if (re) {
+			console.log(re);
+
+			try {
+				json_str = JSON.parse(re);
+
+				if (json_str.result) {
+					img = json_str.result;
+
+					if (json_str.result.type == "pdf" && !json_str.result.promo) {
+						$("#uploaded_file_name2").val(img.src);
+						$("#upload_file2").attr("disabled", "disabled");
+					}
+					else if (json_str.result.type == "pdf" && json_str.result.promo) {
+						console.log('pdf promo');
+						//$("#upload-pdf-promo").val(img.src);
+						$("[name='bases_pdf']").val(img.src);
+						console.log('pdf promo end');
+					}
+					else if (!json_str.result.promo) {
+						str = "<img src='" + img.src + "' height='" + img.height + "' width='" + img.width + "' alt='" + img.alt + "' /><p></p>";
+						//$("#images_uploaded").append(str);
+
+						if (img.id == "1") {
+							val_target = "#uploaded_file_name";
+							dis_target = "#do_upload,#upload_file1,#pub_sube_imagen";
+						} else {
+							val_target = "#uploaded_file_name" + img.id;
+							dis_target = "#upload_file" + img.id + ",#pub_sube_imagen" + img.id;
+						}
+
+						$(val_target).val(img.src);
+
+						tinyMCE.execInstanceCommand("form_pubdescripcion", "mceInsertContent", false, str);
+						$(dis_target).attr("disabled", "disabled");
+					}
+					else {
+						str = "<img src='" + HOMEURL_NEW + img.src + "' height='" + img.height + "' width='" + img.width + "' alt='" + img.alt + "' /><p></p>";
+						$("#image_preview_" + img.id).html(str);
+						$("[name='imagen_" + img.id + "']").val(img.src);
+						$("#borrar_imagen_" + img.id).show();
+					}
+				} else {
+					alert(json_str.error);
+				}
+
+				if ($("#pubsorteo_form").length > 0) {
+					document.getElementById("pubsorteo_form").action = old_form_action;
+					document.getElementById("pubsorteo_form").target = "_self";
+				}
+				else if ($("#promo_paso_3").length > 0) {
+					document.getElementById("promo_paso_3").action = old_form_action;
+					document.getElementById("promo_paso_3").target = "_self";
+				}
+
+
+				console.log('Old form action: ' + old_form_action);
+			} catch (e) {
+				console.log(e);
+			}
+		}
+	});
+	/*Caja de comentarios con TinyMCE*/
+	var num_pastes = num_teclas = 0;
+
+	$("#form_pubdescripcion,.tinymce").tinymce({
+		// Location of TinyMCE script
+		script_url: HOMEURL + 'js/tinymce/jscripts/tiny_mce/tiny_mce.js',
+		language: "es",
+
+		// General options
+		theme: "advanced",
+		plugins: "advimage,layer,advlink,contextmenu,paste",
+		entity_encoding: "raw",
+		document_base_url: "https://www.sortea2.com",
+		force_p_newlines: true,
+		relative_urls: false,
+		fix_table_elements: true,
+		removeformat_selector: "span,b,strong,i,em,table",
+
+
+		// Theme options
+		theme_advanced_buttons1: "bold,italic,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,image,removeformat",
+		theme_advanced_buttons2: "",
+		theme_advanced_buttons3: "",
+		theme_advanced_buttons4: "",
+		theme_advanced_toolbar_location: "top",
+		theme_advanced_toolbar_align: "left",
+		theme_advanced_statusbar_location: "bottom",
+		theme_advanced_resizing: true,
+		//theme_advanced_resizing_min_width : 500,
+		//theme_advanced_resizing_max_width : 500,
+
+
+		// Example content CSS (should be your site CSS)
+		content_css: '/js/tinymce/jscripts/tiny_mce/themes/advanced/skins/default/content.css',
+
+		// Replace values for the template plugin
+		template_replace_values: {
+			username: "Some User",
+			staffid: "991234"
+		},
+		//Avoid users to include colors and strange fonts
+		paste_auto_cleanup_on_paste: true,
+		table_cell_limit: 0,
+		table_row_limit: 0,
+		table_col_limit: 0,
+		paste_auto_cleanup_on_paste: true,
+		paste_remove_spans: true,
+		paste_remove_styles: true,
+		setup: function(ed) {
+			ed.onPaste.add(function(ed, e, o) {
+				num_pastes++;
+				num_teclas--;
+				//console.log(num_pastes);
+				//return tinymce.dom.Event.cancel(e);
+			});
+			ed.onKeyUp.add(function(ed, e) {
+				num_teclas++;
+				//console.log(num_teclas);
+			});
+		}
+	});
+
+
+	$("#promo_pubdescripcion").tinymce({
+		// Location of TinyMCE script
+		script_url: HOMEURL + 'js/tinymce/jscripts/tiny_mce/tiny_mce.js',
+		language: "es",
+
+		// General options
+		theme: "advanced",
+		plugins: "contextmenu,paste",
+		entity_encoding: "raw",
+		document_base_url: "https://www.sortea2.com",
+		force_p_newlines: true,
+		relative_urls: false,
+		fix_table_elements: true,
+		removeformat_selector: "span,b,strong,i,em,table",
+
+
+		// Theme options
+		theme_advanced_buttons1: "bullist,numlist,|,undo,redo,|,link,unlink,removeformat",
+		theme_advanced_buttons2: "",
+		theme_advanced_buttons3: "",
+		theme_advanced_buttons4: "",
+		theme_advanced_toolbar_location: "top",
+		theme_advanced_toolbar_align: "left",
+		theme_advanced_statusbar_location: "bottom",
+		theme_advanced_resizing: true,
+		//theme_advanced_resizing_min_width : 500,
+		//theme_advanced_resizing_max_width : 500,
+
+
+		// Example content CSS (should be your site CSS)
+		content_css: '/js/tinymce/jscripts/tiny_mce/themes/advanced/skins/default/content.css',
+
+		// Replace values for the template plugin
+		template_replace_values: {
+			username: "Some User",
+			staffid: "991234"
+		},
+		//Avoid users to include colors and strange fonts
+		paste_auto_cleanup_on_paste: true,
+		table_cell_limit: 0,
+		table_row_limit: 0,
+		table_col_limit: 0,
+		paste_auto_cleanup_on_paste: true,
+		paste_remove_spans: true,
+		paste_remove_styles: true,
+		setup: function(ed) {
+			ed.onPaste.add(function(ed, e, o) {
+				num_pastes++;
+				num_teclas--;
+				//console.log(num_pastes);
+				//return tinymce.dom.Event.cancel(e);
+			});
+			ed.onKeyUp.add(function(ed, e) {
+				num_teclas++;
+				//console.log(num_teclas);
+			});
+		}
+	});
+
+	$("#submit_pubsorteo").on('click', function(e) {
+		e.preventDefault();
+
+		if ($("#edita_promo_simple").length > 0) {
+			var action = HOMEURL_NEW + "promocion/edita_simple";
+		} else {
+			var action = HOMEURL_NEW + "pubsorteo/guarda_sorteo";
+		}
+
+		var formData = $("#pubsorteo_form").serializeArray();
+		formData.push({ name: "submit_pubsorteo", value: 1 });
+
+		var loader = $("<img src='" + HOMEURL_NEW + "images/ajax-loader.gif' />");
+
+		$.ajax({
+			url: action,
+			data: formData,
+			type: "POST",
+			dataType: "json",
+			beforeSend: function() {
+				$("#submit_pubsorteo").attr("disabled", "disabled");
+
+				$("#submit_pubsorteo").after(loader);
+			},
+			success: function(e) {
+				$(loader).remove();
+				$("#submit_pubsorteo").removeAttr("disabled");
+
+				location.hash = "top";
+				if (typeof e.message != "undefined") {
+					$("#ajaxmsg").html("<div class='alert alert-success'>" + e.message + "</div>");
+					setTimeout(function() {
+						location.href = e.redirect_to;
+					}, 500);
+				} else {
+					$("#ajaxmsg").html("<div class='alert alert-danger'>" + e.error + "</div>");
+				}
+			},
+			error: function() {
+				$(loader).remove();
+				$("#submit_pubsorteo").removeAttr("disabled");
+			}
+		});
+	});
+
+	// validaciones genericas de elementos
+	$(".v_required").on ('blur', function() {
+		if ($(this).val() == "") {
+			show_error(this, "Campo requerido");
+		} else {
+			remove_error(this);
+		}
+	});
+	$(".v_url").on('blur', function() {
+		val = $(this).val();
+
+		//var urlregex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+		var urlregex = new RegExp("^(http[s]?:\\/\\/(www\\.)?|ftp:\\/\\/(www\\.)?|www\\.){1}([0-9A-Za-z-\\.@:%_\+~#=]+)+((\\.[a-zA-Z]{2,3})+)(/(.)*)?(\\?(.)*)?");
+
+		console.log(urlregex.test(val));
+
+		if (val && !urlregex.test(val)) {
+			show_error(this, "URL Inválida");
+		} else {
+			remove_error(this);
+		}
+	});
+	$(".v_email").on('blur', function() {
+		var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+		val = $(this).val();
+
+		if (val && !reg.test(val)) {
+			show_error(this, "E-mail inválido");
+		} else {
+			remove_error(this);
+		}
+	});
+	function show_error(it, message) {
+		if ($(it).next("span").length == 0) {
+			$(it).addClass("v_error");
+			$(it).after("<span>" + message + "</span>");
+		}
+	}
+	function remove_error(it) {
+		$(it).removeClass("v_error");
+		$(it).next("span").remove();
+	}
+	$("select#modoPregunta").on('change', function() {
+
+		var value;
+
+		value = $(this).val();
+
+		if (value == "boolean") {
+			$("#ejemploPregunta").text(lang.vSIONO);
+		}
+		else if (value == "quantity") {
+			$("#ejemploPregunta").text(lang.vCANTIDAD);
+		}
+		else if (value == "number") {
+			$("#ejemploPregunta").text("1, 2, 3, 4 o 5");
+		}
+
+		value = "";
+
+		//alert(value);
+	});
+	$("#respuesta_form").on ('submit', function(e) {
+		e.preventDefault();
+
+		var pregunta = $("input#pregunta").val();
+
+		if (pregunta == "") {
+			$("label#labelPregunta").text("¡Escribe alguna pregunta!");
+			return false;
+		} else {
+			$("label#labelPregunta").text("");
+		}
+
+		var modoRespuesta = $("select#modoPregunta").val();
+		var pregunta = $("#pregunta").attr("value");
+		var formData = new Array();
+
+		formData.push({ name: "modo", value: modoRespuesta });
+		formData.push({ name: "pregunta", value: pregunta });
+		formData.push({ name: "enviar", value: 1 });
+
+		$("div#respuestaAleatoria").html(""); //si es que existia
+
+		$.post($(this).attr("action"), formData, function(retorno) {
+			$("div#respuestaAleatoria").fadeIn('slow');
+			$("div#respuestaAleatoria").append(retorno);
+		}, "text");
+
+		modoRespuesta = "";
+	});
+	$("#sortear_simple").on('click', function(e) {
+		e.preventDefault();
+
+		formData = $("#simple_form").serializeArray();
+		formData.push({ name: 'sortear_simple', value: 1 });
+
+		$.ajax({
+			url: $("#simple_form").attr("action"),
+			data: formData,
+			type: "POST",
+			dataType: "json",
+			beforeSend: function() {
+				$("#sortear_simple").attr("disabled", "disabled");
+			},
+			success: function(e) {
+				$("#sortear_simple").removeAttr("disabled");
+
+				if (e.error) {
+					$("#sortear-error").html("<div class='alert alert-danger'>" + e.error + "</div>");
+				} else {
+					$("#sortear-nombres").removeClass("span8").addClass("span6");
+					$("#sortear-pub").addClass("hide");
+					//$("#simple_resultados .blue_box").css("min-height", $("#sortear-nombres").height()+"px");
+
+					$("#ganadores").html(e.results);
+
+					$("#guarda_ganadores").val(e.ganadores);
+					$("#guarda_num_premios").val(e.num_premios);
+
+					$("#guarda_participantes").val(e.participantes);
+
+					$("#ponResultadosTextarea").val(e.embed_code);
+					$("#simple_embed_code,#simple_resultados").removeClass("hide").removeClass("hide");
+
+					$("#facebook-share-button").data("url", e.facebook_share);
+					$("#facebook-share-button").attr("href", e.facebook_share);
+
+					$("#whatsapp-share").attr("href", e.whatsapp_share);
+
+					$("#imagen-share").attr("href", e.imagen_share);
+
+					$("#ganadores")./*css("width", "0%").*/css("opacity", 0);
+
+					$("#ganadores").animate({
+						//width: "auto",
+						opacity: 1,
+					}, 1500);
+
+					location.hash = "#resultados";
+				}
+			},
+			error: function() {
+				$("#sortear_simple").removeAttr("disabled");
+			}
+		});
+	});
+	$("#nuevosorteo").on('click', function(e) {
+		e.preventDefault();
+		$("#simple_embed_code,#simple_resultados").addClass("hide");
+		$("#lista_nombres,#numeropremios").val("");
+
+		$("#sortear-nombres").removeClass("col-sm-6").addClass("col-sm-8");
+		$("#sortear-pub").removeClass("hide");
+	});
+
+	// sorteos avanzados
+	$(document).on("change", "#titulo_sorteo,#descripcion_sorteo", function(e) {
+		if ($(this).val().length > 2) {
+			$("#check_guardar_sorteo").attr("checked", "checked");
+		}
+	});
+
+	$(document).on("change", "#check_sorteo_privado", function(e) {
+		if ($(this).attr("checked")) {
+			$("#check_guardar_sorteo").attr("checked", "checked");
+			$("#semi_privado").attr("checked", "checked");
+		} else {
+			$("#semi_privado").removeAttr("checked");
+			$("#privado_total").removeAttr("checked");
+		}
+	});
+
+	$("#semi_privado,#privado_total").on('click', function() {
+
+		if ($(this).attr("checked")) {
+			$("#check_sorteo_privado").attr("checked", "checked");
+			$("#check_guardar_sorteo").attr("checked", "checked");
+		}
+	});
+
+	$("#sorteo_programado").on("change", function(event) {
+		$("#check_guardar_sorteo").attr("checked", "checked");
+	});
+
+	$("#hour_sorteo,#min_sorteo,#hour_local, #min_local").on("change", function(event) {
+		$("#sorteo_programado").attr("checked", "checked");
+		$("#check_guardar_sorteo").attr("checked", "checked");
+	});
+
+	$("#datesorteo").on("blur", function(event) {
+		$("#sorteo_programado").attr("checked", "checked");
+		$("#check_guardar_sorteo").attr("checked", "checked");
+	});
+
+
+	/*********************************/
+	$(".tip_premio").on('change', function() {
+
+		if ($(this).val() == 'positivo') {
+			$(".label_castigo").fadeOut('fast');
+			$(".label_premio").fadeIn('fast');
+
+			premio_positivo = true;
+		} else {
+			$(".label_premio").fadeOut('fast');
+			$(".label_castigo").fadeIn('fast');
+
+			premio_positivo = false;
+		}
+	});
+
+	/*Si se selecciona sorteo de emparejamientos, las demas opciones no sirven para nada*/
+	$(document).on("click", "#check_empareja", function(e) {
+		if ($(this).is(":checked")) {
+			$(".premio,#numeropremios,#check_grupos,#nombre_premios").attr("disabled", "disabled");
+			$("#check_grupos").removeAttr("checked");
+			$("#numeropremios,#nombre_premios").val("");
+		} else {
+			$(".premio,#check_grupos,#numeropremios,#nombre_premios").removeAttr("disabled");
+			//$("#numeropremios").removeAttr("disabled");		
+		}
+	});
+	/*Si se selecciona de grupos, que se deshabilite lo demas*/
+	$(document).on("click", "#check_grupos", function(e) {
+		if ($(this).is(":checked")) {
+			$(".premio,#numeropremios,#check_empareja,#nombre_premios").attr("disabled", "disabled");
+			$("#check_empareja").removeAttr("checked");
+			$("#numeropremios,#nombre_premios").val("");
+		} else {
+			$(".premio,#check_empareja,#numeropremios,#nombre_premios").removeAttr("disabled");
+		}
+	});
+
+	$("#borra_nombres").on('click', function(e) {
+		e.preventDefault();
+
+		$("#lista_nombres").val("");
+	});
+
+	$("#varias_participaciones").on('change', function() {
+		if ($(this).is(":checked")) {
+			$("#permitir_repetidos").attr("checked", false);
+		}
+	});
+
+	$("#permitir_repetidos").on('change', function() {
+		if ($(this).is(":checked")) {
+			$("#varias_participaciones").attr("checked", false);
+		}
+	});
+
+	$("#comentario_form").on('submit', function(e) {
+		e.preventDefault();
+
+		formData = $(this).serializeArray();
+		action = $(this).attr("action");
+
+		formData.push({ name: "comment_num", value: $("#comentario_list li").length });
+
+		$.ajax({
+			url: action,
+			data: formData,
+			type: "POST",
+			dataType: "json",
+			beforeSend: function() {
+				$("#submit_comentario").attr("disabled", "disabled");
+			},
+			success: function(e) {
+				$("#submit_comentario").removeAttr("disabled");
+				$("#comentario_mensaje_ajax").html("");
+
+				if (e.error) {
+					$("#comentario_mensaje_ajax").html("<div class='alert alert-danger'>" + e.error + "</div>");
+
+					$('html, body').animate({
+						scrollTop: $("#comentario_mensaje_ajax").offset().top
+					}, 1000);
+
+				} else {
+					if ($("#div_comment_" + e.comid).length > 0) {
+						$("#div_comment_" + e.comid).replaceWith(e.comentario);
+					} else {
+						$("#comentario_list").append(e.comentario);
+					}
+
+					$("#comentario_text").val("");
+
+					$('html, body').animate({
+						scrollTop: $("#div_comment_" + e.comid).offset().top
+					}, 1000);
+
+					$("#comname,#commail,#comurl").removeAttr("readonly");
+					$("#comid,#old_number").val("");
+				}
+			},
+			error: function() {
+				$("#submit_comentario").removeAttr("disabled");
+			}
+		});
+	});
+	$(document).on("click", ".edit_comment_ajax", function(e) {
+		e.preventDefault();
+
+		href = $(this).attr("href");
+		comid = $(this).attr("id").replace("edit_comment_", "");
+
+		$.ajax({
+			url: href,
+			data: null,
+			type: "GET",
+			dataType: "json",
+			beforeSend: function() {
+				$("#submit_comentario").attr("disabled", "disabled");
+				$('html, body').animate({
+					scrollTop: $("#escribe_comentario").offset().top
+				}, 1000);
+			},
+			success: function(e) {
+				$("#submit_comentario").removeAttr("disabled");
+				$("#comentario_mensaje_ajax").html("");
+
+				if (e.error) {
+					$("#comentario_mensaje_ajax").html("<div class='alert alert-danger'>" + e.error + "</div>");
+
+					$('html, body').animate({
+						scrollTop: $("#comentario_mensaje_ajax").offset().top
+					}, 1000);
+
+				} else {
+					$("#old_number").val($("#serial_" + comid).html());
+					$("#comid").val(comid);
+					$("#comname").val(e.comname);
+					$("#commail").val(e.commail);
+					$("#comurl").val(e.comurl);
+
+					$("#comname,#commail,#comurl").attr("readonly", "readonly");
+
+					$("#comentario_text").val(e.comentario_raw);
+				}
+			},
+			error: function() {
+				$("#submit_comentario").removeAttr("disabled");
+			}
+		});
+	});
+
+	$(".nuevoContabilidadForm").on('click', function(evento) {
+		evento.preventDefault();
+		$("#contabilidad_formulario").toggle();
+	});
+	$(".toggle_section").on('click', function(e) {
+		e.preventDefault();
+
+		target = $(this).attr("id").replace("toggle_", "");
+		if ($("#" + target).hasClass("hide")) {
+			$("#" + target).removeClass("hide")
+		} else {
+			$("#" + target).addClass("hide")
+		}
+	});
+
+	$("#twitter_borra_all").on('click', function(e) {
+		$('.twitter_borra').attr('checked', this.checked);
+	});
+	$("#twitter_publica_all").on('click', function(e) {
+		$('.twitter_publica').attr('checked', this.checked);
+	});
+	$("#twitter_ban_all").on('click', function(e) {
+		$('.twitter_ban').attr('checked', this.checked);
+	});
+	$("#twitter_ban1w_all").on('click', function(e) {
+		$('.twitter_ban1w').attr('checked', this.checked);
+	});
+
+	if ($("#add_requirement").length) {
+		if (!$(".requirement_div.hide:eq(0)").length) {
+			$("#add_requirement").fadeOut();
+		}
+
+		$("#add_requirement").on('click', function() {
+			$(".requirement_div.hide:eq(0)").removeClass("hide");
+
+			if (!$(".requirement_div.hide:eq(0)").length) {
+				$("#add_requirement").fadeOut();
+			}
+		});
+	}
+
+	if ($(".requirement_dropdown").length) {
+		function requirement_dropdown_change(obj) {
+			value = $(obj).val();
+			id = $(obj).attr("id").replace("requisito_key_", "");
+
+			$(".requisito_div_" + id).addClass("hide");
+			$("#requisito_div_" + id + "_" + value).removeClass("hide");
+		}
+
+		$(".requirement_dropdown").each(function() {
+			requirement_dropdown_change(this);
+		});
+
+		$(".requirement_dropdown").on('change', function() {
+			requirement_dropdown_change(this);
+		});
+	}
+
+	if ($("#model_form").length) {
+		function process_preview() {
+			var preview_html = "";
+
+			$("#form_campo_list .form_campo").each(function() {
+				var campo_actual = $(this).attr("id").replace("form_campo_", "");
+
+				nombre = $("#campo_nombre_" + campo_actual).val();
+				tipo = $("#campo_tipo_" + campo_actual).val();
+				valores = $("#campo_valores_" + campo_actual).val();
+				requerido = $("#campo_requerido_" + campo_actual).attr("checked");
+				ayuda = $("#campo_ayuda_" + campo_actual).val();
+
+				var this_row = "<div class='clearfix'>";
+
+				this_row += "<label>" + nombre;
+
+				if (requerido && nombre) {
+					this_row += " (*)";
+				}
+
+				this_row += "</label>";
+
+				this_row += "<div class='input'>";
+
+				switch (tipo) {
+					case "email": this_row += "<input type='email' class='span4' />"; break;
+
+					case "dropdown":
+						this_row += "<select class='span4'>";
+
+						valores_arr = valores.split(",");
+						for (var i = 0; i < valores_arr.length; i++) {
+							this_row += "<option value='" + valores_arr[i] + "'>" + valores_arr[i] + "</option>";
+						}
+
+						this_row += "</select>";
+
+						break;
+					case "checkbox": this_row += "<input type='checkbox' value='1'/>"; break;
+					case "textarea": this_row += "<textarea class='span4'></textarea>"; break;
+
+					default: this_row += "<input type='text' class='span4' />";
+				}
+
+				if (ayuda) {
+					this_row += "<span class='help-block'>" + ayuda + "</span>";
+				}
+
+				this_row += "</div>";
+
+				this_row += "</div>";
+				this_row += "<hr />";
+
+				preview_html += this_row;
+			});
+
+			$("#form_vista_previa").html(preview_html);
+
+			if (preview_html) {
+				$("#form_vista_previa_div").removeClass("hide");
+			} else {
+				$("#form_vista_previa_div").addClass("hide");
+			}
+		}
+
+		var campo_actual = 1;
+		var model_html = "" + $("#model_form").html();
+
+		if (typeof campos_json != "undefined" && campos_json.length > 0) {
+
+			for (var i in campos_json) {
+
+				detalles = campos_json[i];
+
+				var new_html = model_html.replace(/_i_/g, campo_actual);
+				$("#form_campo_list").append(new_html);
+
+				$("#campo_nombre_" + campo_actual).val(detalles["campo_nombre"]);
+				$("#campo_tipo_" + campo_actual).val(detalles["campo_tipo"]);
+				$("#campo_valores_" + campo_actual).val(detalles["campo_valores"]);
+
+				if (detalles["campo_tipo"] == "dropdown") {
+					$("#campo_valores_" + campo_actual + "_div").removeClass("hide");
+				}
+
+				if (detalles["campo_requerido"]) {
+					$("#campo_requerido_" + campo_actual).attr("checked", "checked");
+				} else {
+					$("#campo_requerido_" + campo_actual).removeAttr("checked");
+				}
+
+				$("#campo_ayuda_" + campo_actual).val(detalles["campo_ayuda"]);
+
+				campo_actual++;
+			}
+
+		} else {
+			var new_html = model_html.replace(/_i_/g, campo_actual);
+			$("#form_campo_list").append(new_html);
+
+			campo_actual++;
+		}
+
+		process_preview();
+
+		$("#add_campo").on('click', function() {
+			var new_html = model_html.replace(/_i_/g, campo_actual);
+
+			$("#form_campo_list").append(new_html);
+
+			campo_actual++;
+		});
+
+		$(document).on("change", ".campo_tipo", function(e) {
+			var campo_seleccionado = $(this).attr("id").replace("campo_tipo_", "");
+
+			if ($(this).val() == "dropdown") {
+				$("#campo_valores_" + campo_seleccionado + "_div").removeClass("hide");
+			} else {
+				$("#campo_valores_" + campo_seleccionado + "_div").addClass("hide");
+			}
+		});
+
+		$(document).on("click", ".click_form_preview", process_preview);
+		$(document).on("change", ".change_form_preview", process_preview);
+	}
+
+	$("[name='submit_participar']").on('click', function(e) {
+		if ($("[name='fb_required']").val() && $("input[name='fb_tab_id']").length == 0 && !$("[name='fb_logged_in']").val()) {
+
+			console.log("cookie es " + getCookie('ci_session'));
+			ci_session = parseSerializedPHP(getCookie('ci_session'));
+
+			if (!ci_session || (ci_session.fb_id == undefined)) {
+				console.log("ci_session undefined");
+				e.preventDefault();
+
+				var callback = "afterFbLoginParticipa";
+				var strWindowFeatures = "toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, resizable=1,scrollbars=1,status=1,width=640,height=480,top=0,left=0";
+
+				win_popup = window.open(HOMEURL + "facebook_login/login_done?callback=" + callback, "_blank", strWindowFeatures);
+
+				return;
+			}
+			console.log("ci_session retorna " + ci_session.fb_id);
+
+
+		}
+
+		if ($("[name='twitter_required']").val()) {
+			if (!$("[name='twitter_logged_in']").val()) {
+				e.preventDefault();
+
+				var strWindowFeatures = "toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, resizable=1,scrollbars=1,status=1,width=640,height=480,top=0,left=0";
+
+				win_popup = window.open(HOMEURL + "registro/redirect_to_twitter", "_blank", strWindowFeatures);
+
+				return;
+			}
+		}
+	});
+	$(".change_sorteo_widget_size").on('change', function() {
+		try {
+			w = parseInt($("#widget_width").val());
+			h = parseInt($("#widget_height").val());
+		} catch (e) {
+			alert("Número inválido");
+			return;
+		}
+
+		if (w < 310 || w > 640) {
+			alert("La anchura debe estar entre 310px y 640px");
+			return;
+		}
+
+		if (h < 310 || h > 640) {
+			alert("La altura debe estar entre 310px y 640px");
+			return;
+		}
+
+		ht = $("#widget_result").val();
+		ht = ht.replace(/width=\"[0-9]+\"/, "width=\"" + w + "\"");
+		ht = ht.replace(/height=\"[0-9]+\"/, "height=\"" + h + "\"");
+
+		$("#widget_result").val(ht);
+	});
+
+	if ($("#interactive_tabs").length > 0) {
+		$(".tab_sections").addClass("hide");
+
+		h = location.hash;
+
+		$(h.replace("mv_", "")).removeClass("hide");
+
+		$("li", $("#interactive_tabs")).each(function() {
+			if (h == $("a", $(this)).attr("href")) {
+				$(this).addClass("active");
+
+				if ($("#hotel_homebox").length > 0) {
+					if (h == "#mv_hotel-reports") {
+						$("#hotel_homebox").removeClass("restaurant_bg").addClass("hotel_bg");
+					} else {
+						$("#hotel_homebox").removeClass("hotel_bg").addClass("restaurant_bg");
+					}
+				}
+			}
+		});
+
+		if ($("#interactive_tabs li.active").length == 0) {
+			$("#interactive_tabs li:first").addClass("active");
+			$(".tab_sections:first").removeClass("hide");
+		}
+
+		$("#interactive_tabs a").on('click', function(e) {
+			//e.preventDefault();
+
+			$("#interactive_tabs li").removeClass("active");
+
+			h = $(this).attr("href");
+
+			$(".tab_sections").addClass("hide");
+			$(h.replace("mv_", "")).removeClass("hide");
+
+			$("li", $("#interactive_tabs")).each(function() {
+				if (h == $("a", $(this)).attr("href")) {
+					$(this).addClass("active");
+
+					if ($("#hotel_homebox").length > 0) {
+						if (h == "#mv_hotel-reports") {
+							$("#hotel_homebox").removeClass("restaurant_bg").addClass("hotel_bg");
+						} else {
+							$("#hotel_homebox").removeClass("hotel_bg").addClass("restaurant_bg");
+						}
+					}
+				}
+			});
+
+			if (typeof map != "undefined") {
+				google.maps.event.trigger(map, 'resize');
+
+				if ($("#gps_coordinates").val() != "") {
+					var coords = $("#gps_coordinates").val().split(',');
+					var centerMap = new google.maps.LatLng(parseFloat(coords[0]), parseFloat(coords[1]));
+
+					map.setCenter(centerMap);
+				} else {
+					map.setCenter(marker.getPosition());
+				}
+			}
+		});
+
+	}
+
+	$("#acceso_button").on('click', function() {
+		$("#login-dropdown-form").removeClass("hide");
+
+		if ($("#login-dropdown-form").is(":visible")) {
+			window.scrollTo(0, 0);
+			$("#loginUsername").focus();
+			$("body").append("<div class='modal-backdrop fade in'></div>");
+		} else {
+			$(".modal-backdrop").remove();
+		}
+	});
+
+	$(document).on('click', function(event) {
+		if (!$(event.target).closest('#login-dropdown-form').length &&
+			!$(event.target).is('#login-dropdown-form') && !$(event.target).is('#acceso_button')) {
+			if ($('#login-dropdown-form').is(":visible")) {
+				$('#login-dropdown-form').addClass("hide");
+				$(".modal-backdrop").remove();
+			}
+		}
+	});
+
+	$(".select_all").on('change', function() {
+		select_all_obj = this;
+		value = $(this).val();
+
+		if ($(this).is(":checked")) {
+			$("." + value).prop("checked", "checked");
+		} else {
+			$("." + value).prop("checked", false);
+		}
+
+		$("." + value).on('change', function() {
+			var all_selected = true;
+
+			$("." + value).each(function() {
+				if (!$(this).is(":checked")) {
+					all_selected = false;
+				}
+			});
+
+			if (all_selected) {
+				$(select_all_obj).prop("checked", "checked");
+			} else {
+				$(select_all_obj).prop("checked", false);
+			}
+		});
+	});
+
+	if ($(".sidebar-inside").length == 0) {
+		$("#close-responsive-menu-button").remove();
+	}
+
+	$(document).on('click', function(event) {
+		if (!$(event.target).closest('.sidebar-inside').length &&
+			!$(event.target).is('.sidebar-inside')) {
+			if ($('.sidebar-inside').is(":visible") && $(".sidebar-inside").css("position") == "absolute") {
+				$('.sidebar-inside').hide()
+			}
+		}
+	});
+
+	function check_sidebar_location() {
+
+		if ($(".sidebar-inside").css("position") == "absolute") {
+			$(".sidebar-inside").insertAfter("#responsive-menu-button");
+		} else {
+			$(".sidebar-inside").appendTo(".sidebar").show();
+		}
+	}
+
+	check_sidebar_location();
+	$(window).on('resize', check_sidebar_location);
+
+	$(document).on("click", "#responsive-menu-button", function(e) {
+		e.stopPropagation();
+		window.scrollTo(0, 0);
+		$(".sidebar-inside").show("medium");
+	});
+
+	$(document).on("click", "#close-responsive-menu-button", function() {
+		$(".sidebar-inside").hide("medium");
+	});
+
+	$(document).on("click", ".embedded-login-click", function(e) {
+		e.preventDefault();
+
+		$($(this).attr("href")).addClass("in");
+		$("#embedded-register").removeClass("in");
+		$(this).addClass("active");
+		$(".embedded-register-click").removeClass("active");
+	});
+	$(document).on("click", ".embedded-register-click", function(e) {
+		e.preventDefault();
+
+		$($(this).attr("href")).addClass("in");
+		$("#embedded-login").removeClass("in");
+		$(this).addClass("active");
+		$(".embedded-login-click").removeClass("active");
+	});
+
+	$(document).on("click", ".add_requisito", function(e) {
+
+		var type = 'requisitos';
+		var primera_fila_id = $('.' + type + '_fila:first').attr('id').replace(type + '_fila_', '');
+		var ultima_fila_id = $('.' + type + '_fila:last').attr('id').replace(type + '_fila_', '');
+		var nuevo_id = parseInt(ultima_fila_id) + 1;
+		console.log('nuevo id: ' + nuevo_id);
+
+		$('#' + type + '_fila_' + primera_fila_id).clone().attr('id', type + '_fila_' + nuevo_id).appendTo('#requisitos-lista');
+
+		$('#' + type + '_fila_' + nuevo_id).find('[name="borrar_' + type + '"]').attr('id', 'borrar_' + type + nuevo_id);
+		$('#' + type + '_fila_' + nuevo_id).find('input:text').val('');
+		$('#' + type + '_fila_' + nuevo_id).find('select').val('');
+
+		$('#' + type + '_fila_' + nuevo_id).find('p.help-block').html('');
+		$('#' + type + '_fila_' + nuevo_id).find('div.has-error').removeClass('has-error');
+
+		$('#' + type + '_fila_' + nuevo_id).find('.requisito-id').attr('id', 'requisito_id' + nuevo_id);
+		$('#' + type + '_fila_' + nuevo_id).find('.requisito-cantidad').attr('id', 'requisito_cantidad' + nuevo_id);
+		$('#' + type + '_fila_' + nuevo_id).find('.requisito-obligatorio').attr('id', 'requisito_obligatorio' + nuevo_id);
+		$('#' + type + '_fila_' + nuevo_id).find('.requisito-participacion').attr('id', 'requisito_participacion' + nuevo_id);
+		$('#' + type + '_fila_' + nuevo_id).find('.seccion_cantidad').attr('id', 'seccion_cantidad_' + nuevo_id);
+		$('#' + type + '_fila_' + nuevo_id).find('.seccion_participacion').attr('id', 'seccion_participacion_' + nuevo_id);
+		$('#' + type + '_fila_' + nuevo_id).find('.badge-requisitos').attr('id', 'requisito_badge' + nuevo_id).html(nuevo_id + 1);
+
+	});
+
+	function check_requisito_obligatorio(element) {
+		var id = element.attr('id').replace('requisito_obligatorio', '');
+
+		if (element.val() != 'participaciones') {
+			$('#seccion_participacion_' + id).hide();
+			$('#requisito_participacion' + id).val('');
+		} else {
+			$('#seccion_participacion_' + id).show();
+		}
+	}
+
+	function check_requisito_cantidad(element) {
+		var selected = element.val();
+		var id = element.attr('id').replace('requisito_id', '');
+
+		if (selected && requisito_cantidad[selected]) {
+			$('#seccion_cantidad_' + id).show();
+		} else {
+			$('#seccion_cantidad_' + id).hide();
+			$('#requisito_cantidad' + id).val('');
+		}
+	}
+
+	function check_pais_islas(element) {
+		if (element.val() == '1') /*1 == Spain*/ {
+			$('#pais-islas').show();
+		} else {
+			$('#pais-islas').hide();
+			$('#pub_excluye_baleares').removeAttr('checked');
+			$('#pub_excluye_canarias').removeAttr('checked');
+		}
+	}
+
+	function check_erroneo_fila(element) {
+		var nombre = element.attr('id').replace('erroneo_checkbox_', '');
+
+		if (element.is(':checked')) {
+			$('#erroneo_ocultable_' + nombre).show();
+		}
+		else {
+			$('#erroneo_ocultable_' + nombre).hide();
+		}
+	}
+
+	if ($(".requisito-obligatorio").length > 0) {
+		$('.requisito-obligatorio').each(function() {
+			check_requisito_obligatorio($(this));
+		});
+	}
+
+	if ($(".requisito-id").length > 0) {
+		$('.requisito-id').each(function() {
+			check_requisito_cantidad($(this));
+		});
+	}
+
+	if ($("#pais-islas").length > 0) {
+		$('#pais_id').each(function() {
+			check_pais_islas($(this));
+		});
+	}
+
+	$(document).on("change", ".requisito-obligatorio", function(e) {
+		check_requisito_obligatorio($(this));
+	});
+
+	$(document).on("change", ".requisito-id", function(e) {
+		check_requisito_cantidad($(this));
+	});
+
+	$(document).on("change", "#pais_id", function(e) {
+		check_pais_islas($(this));
+	});
+
+	$(document).on("click", ".borrar-requisitos", function(e) {
+
+		if ($('.requisitos_fila').size() == 1) {
+			$('input, select', '.requisitos_fila').val('');
+		}
+		else {
+			var id = $(this).attr('id').replace('borrar_requisitos', '');
+
+			$('#requisitos_fila_' + id).remove();
+		}
+	});
+
+	$(document).on("change", "#premio_categoria", function(e) {
+
+		formData = [{ name: 'premio_categoria', value: $(this).val() }];
+
+		$.ajax({
+			url: HOMEURL_NEW + "ajax/nombre_premio_lista",
+			data: formData,
+			type: "POST",
+			dataType: "html",
+			beforeSend: function() {
+				$("#premio_nombre").attr("disabled", "disabled");
+			},
+			success: function(e) {
+				$("#premio_nombre").removeAttr("disabled");
+				$("#premio_nombre").html(e);
+			},
+			error: function() {
+				$("#premio_nombre").removeAttr("disabled");
+			}
+		});
+	});
+
+	$(document).on("change", "#pais_id", function(e) {
+
+		$.ajax({
+			url: HOMEURL_NEW + "ajax/region_lista/" + $(this).val(),
+			type: "POST",
+			dataType: "html",
+			beforeSend: function() {
+				$("#region_id").attr("disabled", "disabled");
+			},
+			success: function(e) {
+				$("#region_id").removeAttr("disabled");
+				$("#region_id").html(e);
+			},
+			error: function() {
+				$("#region_id").removeAttr("disabled");
+			}
+		});
+	});
+
+	$.each($('.upload-file-promo'), function(elem) {
+
+		var index = $(this).attr("id").replace("upload_file_", "");
+
+		var uploader = new ImageUploader({
+			inputElement: document.getElementById('upload_file_' + index),
+			uploadUrl: HOMEURL_NEW + "pubsorteo/" + "guarda_img_compressed/" + index,
+			onProgress: function(event) {
+			},
+			onFileComplete: function(event, file) {
+
+				if (typeof (event.explicitOriginalTarget) != "undefined") {
+					var the_event = event.explicitOriginalTarget;
+				}
+				else {
+					var the_event = event.currentTarget;
+				}
+
+
+				var img = JSON.parse(the_event.response);
+
+				str = "<img src='" + img.src + "' /><p></p>";
+				$("#image_preview_" + img.id).html(str);
+				$("[name='imagen_" + img.id + "']").val(img.src);
+				$("#borrar_imagen_" + img.id).show();
+			},
+			onComplete: function(event) {
+			},
+			maxWidth: 512,
+			quality: 0.90,
+			//timeout: 5000,
+			debug: false
+		});
+
+	});
+
+	var old_form_action = "";
+	$("#upload-pdf-promo").on('change', function() {
+		old_form_action = document.getElementById("promo_paso_3").action;
+
+		if ($(this).attr("id") == "upload-pdf-promo") {
+			var method = "guarda_pdf/1";
+		} else {
+			var method = "guarda_img/" + $(this).attr("id").replace("upload_file_", "") + "/1";
+		}
+
+		document.getElementById("promo_paso_3").action = HOMEURL_NEW + "pubsorteo/" + method;
+		document.getElementById("promo_paso_3").target = "hidden_iframe";
+		document.getElementById("promo_paso_3").submit();
+	});
+
+	$(document).on("click", ".borrar-imagen-button, .borrar-bases-button", function(e) {
+		if (confirm("¿Está seguro de que desea " + $(this).attr("title") + "?")) {
+			if ($(this).hasClass("borrar-imagen-button")) {
+				var id = $(this).attr("id").replace("borrar-imagen-button", "");
+
+				$("#image_preview_" + id).html('');
+				$("#borrar_imagen_" + id).hide();
+				$("[name='imagen_" + id + "']").val('');
+			} else {
+
+				$("#borrar_bases").hide();
+				$("[name='bases_pdf']").val('');
+				$("#bases_pdf_link").remove();
+			}
+		}
+	});
+
+	$(document).on("change", "#tipo_promocion", function(e) {
+		if ($(this).val() == 2) {
+			$('.promo_imagen').show();
+			$('#mas_imagenes_explicacion').hide();
+		}
+		else {
+			for (var i = 3; i <= 5; i++) {
+				$('#promo_imagen' + i).hide();
+				$('#mas_imagenes_explicacion').show();
+			}
+		}
+	});
+
+	if ($("#comprueba_pago_pubsorteo").length > 0) {
+		comprueba_pago('pubsorteo', $("#comprueba_pago_pubsorteo").data("id"));
+	}
+
+	$(document).on("change", ".erroneo-checkbox", function(e) {
+		check_erroneo_fila($(this));
+	});
+
+	if ($(".erroneo-checkbox").length > 0) {
+		$('.erroneo-checkbox').each(function() {
+			check_erroneo_fila($(this));
+		});
+	}
+
+	$(document).on("click", ".erroneos-corregido", function(e) {
+		var id = $(this).data("id");
+		var pubid = $(this).data("pubid");
+
+		var parent = $(this).parent();
+
+		e.preventDefault();
+
+		formData = [{ name: 'campo', value: id }, { name: 'pubid', value: pubid }];
+
+		$.ajax({
+			url: HOMEURL_NEW + "ajax/erroneo_corregido",
+			data: formData,
+			type: "POST",
+			dataType: "html",
+			beforeSend: function() {
+			},
+			success: function(e) {
+				parent.hide();
+			},
+			error: function() {
+			}
+		});
+	});
+
+	if (include_star_rating) {
+		$(function() {
+			$(".rating-vote").rateYo({
+				fullStar: true,
+				rating: $(".rating-vote").data('rating'),
+				starWidth: "25px",
+				onSet: function() {
+					var voto = $(this).rateYo("rating");
+					var pubid = $(this).data("pubid");
+
+					formData = [
+						{ name: 'pubid', value: pubid },
+						{ name: 'voto', value: voto }
+					];
+
+					$.ajax({
+						url: HOMEURL_NEW + "ajax/voto_pubsorteo",
+						data: formData,
+						type: "POST",
+						dataType: "html"
+					});
+				}
+			});
+
+			$(".rating").rateYo({
+				fullStar: false,
+				rating: $(".rating").data('rating'),
+				starWidth: "15px",
+				readOnly: true
+			});
+		});
+	}
+
+	$(document).on("click", ".comparte-sorteo", function(e) {
+		var comparte = $(this).data('comparte');
+
+		$.ajax({
+			url: HOMEURL_NEW + "ajax/comparte",
+			data: [{ name: "comparte", value: comparte }],
+			type: "POST",
+			dataType: "json",
+			success: function(e) {
+			},
+			error: function() {
+			}
+		});
+	});
+
+	$(document).on("click", ".show-full-list", function(e) {
+
+		e.preventDefault();
+		$(".full-list").show();
+		$(this).hide();
+	});
+
+	$("#suscripcion-homepage").on('submit', function(e) {
+
+		console.log('suscripcion-homepage');
+		e.preventDefault();
+
+		$('[name="submit_suscripcion"]', '#suscripcion-homepage').prop("disabled", true);
+
+		var formData = $(this).serializeArray();
+
+		formData.push({ name: "ajax", value: 1 });
+
+		var url = $(this).attr("action");
+
+		$.ajax({
+			url: url,
+			data: formData,
+			type: "POST",
+			dataType: "json",
+			beforeSend: function() {
+			},
+			success: function(e) {
+				$('[name="submit_suscripcion"]', '#suscripcion-homepage').prop("disabled", false);
+				if (e.error) {
+					$('#suscripcion_mensaje').hide();
+					$('#suscripcion_error').html(e.error).show();
+				}
+				else if (e.mensaje) {
+					$('[name="email"]', '#suscripcion-homepage').val('');
+					$('#suscripcion_error').hide();
+					$('#suscripcion_mensaje').html(e.mensaje).show();
+				}
+			},
+			error: function() {
+			}
+		});
+	});
+
+	$(document).on("click", ".expand-nombres", function(e) {
+		var element = $(this).data('lista');
+		$('#' + element).show();
+		$(this).hide();
+	});
+
+
+	if ($('#sortear-equipos-resultado').length > 0) {
+		console.log('scrolling');
+		$('html, body').animate({
+			scrollTop: $("#sortear-equipos-resultado").offset().top
+		}, 2000);
+	}
+
+	$(document).on("click", ".euromillones-analiza-numero, .euromillones-analiza-estrella", function(e) {
+
+		$(this).toggleClass('selected');
+
+		analiza_euromillones();
+	});
+
+	if ($('.euromillones-analiza').length > 0) {
+		analiza_euromillones();
+	}
+
+	if ($('#euromillones-analiza-resultado').length > 0) {
+		console.log('scrolling');
+		$('html, body').animate({
+			scrollTop: $("#euromillones-analiza-resultado").offset().top
+		}, 2000);
+	}
+
+});
+
+function detecta_pais(country_name, country_code) {
+	$.ajax({
+		url: HOMEURL_NEW + "ajax/detecta_pais",
+		data: [
+			{ name: "country_name", value: country_name },
+			{ name: "country_code", value: country_code },
+		],
+		type: "POST",
+		dataType: "html",
+		success: function(e) {
+			location.reload();
+		},
+		error: function() {
+		}
+	});
+}
+
+function analiza_euromillones() {
+	var numeros = [];
+	var estrellas = [];
+	var contador = 0;
+
+	var numeros_seleccionados = $(".euromillones-analiza-numero.selected").length;
+	var estrellas_seleccionadas = $(".euromillones-analiza-estrella.selected").length;
+
+	$(".euromillones-analiza-numero.selected").each(function() {
+		numeros[contador] = $(this).data('value');
+		contador++;
+	});
+	$('#analiza-numeros').val(JSON.stringify(numeros));
+
+	contador = 0;
+	$(".euromillones-analiza-estrella.selected").each(function() {
+		estrellas[contador] = $(this).data('value');
+		contador++;
+	});
+	$('#analiza-estrellas').val(JSON.stringify(estrellas));
+
+	if (numeros_seleccionados >= 5 && estrellas_seleccionadas >= 2) {
+		$('#euromillones-analizar-disabled-explicacion').hide();
+		$('#euromillones-analizar-submit').removeClass('disabled');
+	}
+	else {
+		$('#euromillones-analizar-disabled-explicacion').show();
+		$('#euromillones-analizar-submit').addClass('disabled');
+	}
+}
+
+function base64ToBlob(base64, mime) {
+	mime = mime || '';
+	var sliceSize = 1024;
+	var byteChars = window.atob(base64);
+	var byteArrays = [];
+
+	for (var offset = 0, len = byteChars.length; offset < len; offset += sliceSize) {
+		var slice = byteChars.slice(offset, offset + sliceSize);
+
+		var byteNumbers = new Array(slice.length);
+		for (var i = 0; i < slice.length; i++) {
+			byteNumbers[i] = slice.charCodeAt(i);
+		}
+
+		var byteArray = new Uint8Array(byteNumbers);
+
+		byteArrays.push(byteArray);
+	}
+
+	return new Blob(byteArrays, { type: mime });
+}
+
+
+/*JS upload image compress*/
+var fileReader = new FileReader();
+
+var fileReaderId = '';
+
+fileReader.onload = function(event) {
+
+	var FileReaderSettings = {
+		max_width: 700,
+		max_height: 700
+	}
+
+	var image = new Image();
+
+	image.onload = function() {
+
+		document.getElementById(fileReaderId).src = image.src;
+		var canvas = document.createElement("canvas");
+		var context = canvas.getContext("2d");
+
+		var ratio = 1;
+
+
+		$("#" + fileReaderId).val(null);
+
+		if (image.width > FileReaderSettings.max_width)
+			ratio = FileReaderSettings.max_width / image.width;
+		else if (image.height > FileReaderSettings.max_height)
+			ratio = FileReaderSettings.max_height / image.height;
+
+		canvas.width = image.width * ratio;
+		canvas.height = image.height * ratio;
+		context.drawImage(image,
+			0,
+			0,
+			image.width,
+			image.height,
+			0,
+			0,
+			canvas.width,
+			canvas.height
+		);
+
+		$.ajax({
+			url: HOMEURL_NEW + "ajax/store_image_compressed",
+			data: [
+				{ name: "image_data", value: canvas.toDataURL() },
+			],
+			type: "POST",
+			dataType: "html",
+			success: function(e) {
+				$('#archivo-actual').html('<p class="help-block">Archivo actual: <a target="_blank" href="' + e + '">' + e + '</p>');
+			},
+			error: function() {
+			}
+		});
+
+		console.log('After canvas to data URL');
+	}
+	image.src = event.target.result;
+};
+
+var loadImageFile = function($elementId) {
+
+	var filterType = /^(?:image\/bmp|image\/cis\-cod|image\/gif|image\/ief|image\/jpeg|image\/jpeg|image\/jpeg|image\/pipeg|image\/png|image\/svg\+xml|image\/tiff|image\/x\-cmu\-raster|image\/x\-cmx|image\/x\-icon|image\/x\-portable\-anymap|image\/x\-portable\-bitmap|image\/x\-portable\-graymap|image\/x\-portable\-pixmap|image\/x\-rgb|image\/x\-xbitmap|image\/x\-xpixmap|image\/x\-xwindowdump)$/i;
+
+	var uploadImage = document.getElementById($elementId);
+
+	//check and retuns the length of uploded file.
+	if (uploadImage.files.length === 0) {
+		return;
+	}
+
+	fileReaderId = $elementId;
+
+	//Is Used for validate a valid file.
+	var uploadFile = document.getElementById($elementId).files[0];
+	if (!filterType.test(uploadFile.type)) {
+		alert("Please select a valid image.");
+		return;
+	}
+
+	fileReader.readAsDataURL(uploadFile);
+}
+
+
+$("#upload_file_promo").on('change', function() {
+	loadImageFile('upload_file_promo');
+});
+
+/*END JS upload image compress*/
+
+$(document).on('click', '.stripe-buy-button', function(e) {
+
+	console.log('stripe-buy-button');
+
+	if ($('#saldo-coste').length > 0 && $('input[name="certificado_precio"]').length > 0) {
+		var modo = 'saldo';
+		var cost = Math.round(100 * $('#saldo-coste').val() * $('input[name="certificado_precio"]').val()) / 100;
+		var referenceId = $(this).data('reference-id');
+		var description = $(this).data('description') + ' total ' + cost.toString() + '€';
+	} else {
+		var modo = 'certificado';
+		var cost = $(this).data('cost');
+		var referenceId = $(this).data('reference-id');
+		var description = $(this).data('description');
+	}
+
+	console.log('Cost is ' + cost);
+	console.log('description is ' + description);
+
+	e.preventDefault();
+
+	$.ajax({
+		url: HOMEURL + $(this).data('href'),
+		method: 'POST',
+		data: [{
+			name: "cost",
+			value: cost
+		}, {
+			name: "modo",
+			value: modo
+		}, {
+			name: "referenceId",
+			value: referenceId
+		}, {
+			name: "description",
+			value: description
+		}, {
+			name: "redirectSuccess",
+			value: $(this).data('redirect-success')
+		}, {
+			name: "redirectError",
+			value: $(this).data('redirect-error')
+		}
+		],
+		dataType: 'json',
+		beforeSend: function() {
+
+		},
+		success: function(response) {
+
+			console.log('Stripe response success');
+			var stripe = Stripe(response.sp_key);
+
+			stripe.redirectToCheckout({
+				sessionId: response.session.id
+			}).then(function(result) {
+				alert(result.error.message);
+			});
+		},
+		error: function(response) {
+			console.log('Stripe response error');
+
+		}
+	});
+});
+
+$("input[type='file'][name='archivo_nombres']").on('change', function() {
+	$('#group_down').hide();
+	$('#sorteo-programado-fieldset').hide();
+	$('#archivo_nombres_desc').hide();
+
+	$('#fichero_nombres_explanation').show();
+	$('#lista_nombres').val('');
+});
+
+$("#borra_fichero").on('click', function(e) {
+	e.preventDefault();
+	$('#sorteo-programado-fieldset').show();
+	$('#fichero_nombres_explanation').hide();
+
+	$("input[type='file'][name='archivo_nombres']").val("");
+	$("#archivo_nombres_desc").hide();
+	$('#group_down').show();
+	$("#reset_fichero_nombres").show();
+	$("input[name='reset_fichero_nombres']").val(1);
+});
+
+
+
+$('#instagram-comentarios').on ('click', function(e) {
+	console.log('instagram comentarios clicked');
+	$(this).attr('disabled', true).css('opacity', 0.5);
+	$('#esperar-gif').show();
+});
+
+$("#show-clean-list-ganadores").on ('click', function(e) {
+	e.preventDefault();
+	$('#resultados-admin-ganadores').show();
+	$(this).hide();
+
+	$("ul#resultados-publico-ganadores1, ul#resultados-publico-ganadores2, ul#resultados-publico-ganadores3, .only-you-explained, .show-full-list").hide();
+});
+
+if (document.getElementById('programado-contador') != null) {
+	var countDownDate = new Date($('#programado-contador').data('time')).getTime();
+
+	// Update the count down every 1 second
+	var x = setInterval(function() {
+		document.getElementById("programado-contador-intro").innerHTML = 'dentro de ';
+		// Get today's date and time
+		var now = new Date().getTime();
+
+		// Find the distance between now and the count down date
+		var distance = countDownDate - now;
+
+		// Time calculations for days, hours, minutes and seconds
+		var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+		var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+		var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+		var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+		var texto = " ";
+		if (days == 1) {
+			texto += "un día ";
+		} else if (days > 0) {
+			texto += (days + " días ");
+		}
+		
+		if (hours == 1) {
+			texto += "1 hora ";
+		} else if (hours > 0) {
+			texto += (hours +" horas ");
+		}
+		
+		minutes =  ('0' + minutes).slice(-2);
+		seconds =  ('0' + seconds).slice(-2);
+
+		if (distance > 1) {
+			document.getElementById("programado-contador").innerHTML = texto + minutes + ":" + seconds + " ";
+		}
+
+		// If the count down is finished, write some text
+		if (distance <= 1) {
+			clearInterval(x);
+			location.reload();
+			return;
+		}
+	}, 1000);
+}
+
+$('#borradores-form').on('click', '#select_all', function(e) {
+	
+	if($(this).prop('checked')){
+        $('.checkbox', '#borradores-form').prop('checked',true);
+    }
+    else{
+        $('.checkbox', '#borradores-form').prop('checked',false);
+    }
+});
+
+$('#borradores-form').on('click', '#borradores-confirm', function() {
+	$('.checkbox:checked', '#borradores-form').each(function() {
+		
+		var listItem = $(this).parent();
+		$.ajax({
+			url: HOMEURL + 'pubsorteo/cambia_estado/' + $(this).val() + '/publicado/1',
+			method: 'POST',
+			dataType: 'html',
+			success: function(response) {
+				listItem.remove();
+			},
+		});
+	});
+	
+	location.reload();
+});
+
+$('li', '#borradores-form').each(function() {
+	var listItem = $(this);
+	var id=$(this).data('usuid');
+	$.ajax({
+		url: HOMEURL + 'ajax/borrador_score/' + id,
+		method: 'GET',
+		dataType: 'html',
+		success: function(response) {
+			listItem.append(response);
+		},
+	});
+});
+	
+
+$('#borradores-form').on('click', '.borradores-origen', function() {
+	
+	var id = $(this).data('id');
+	var listItem = $(this).parent();
+	
+	if (document.getElementById("vista-simple-" + id)) {
+		var elem = document. getElementById("vista-simple-" + id); 
+		elem.parentNode.removeChild(elem);
+	} else {
+		$.ajax({
+			url: HOMEURL + 'ajax/detalle_sorteo/' + id,
+			method: 'GET',
+			dataType: 'html',
+			success: function(response) {
+				listItem.append(response);
+			},
+		});
+	}
+});

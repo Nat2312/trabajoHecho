@@ -1,0 +1,70 @@
+lang =
+{
+	vSALUDO : "Hola!",
+	vSEGURO : "\u00BFEstás seguro?",
+	vSALIR : "Salir",
+	vMORENAMES: "Seg\u00FAn vaya escribiendo nombres se habilitar\u00E1n m\u00E1s casillas para rellenar.",
+	
+	//S2 VOTACIONES
+	vSORTEO : "sorteo",
+	vCOMENTARIO : "comentario",
+	vSEGURO_BORRAR: "\u00BFEst\u00E1 seguro de que desea borrar el ",
+	vSEGURO_EXCLUIR: "¿Seguro que quiere excluir del sorteo",
+	vAL_PARTICIPANTE: " al participante ",
+		
+	//S2 REGISTRO
+	vREGISTRADO : "Se ha completado el registro satisfactoriamente. \u00A1Bienvenido a sortea2!<br/>Ya puedes <a href='../login'>entrar en el sistema</a>",
+	
+	//S2 SORTEOS
+	vINTRODUCCION_MANUAL : "Seg\u00FAn vaya escribiendo nombres se habilitar\u00E1n m\u00E1s casillas para rellenar.",
+	vTEXTAREA : "Introduzca cada nombre en una l\u00EDnea diferente",
+	vARCHIVO_OTRO_FORMATO : "El fichero debe tener formato de solo texto (.txt).\u00A1Ni Excel ni Word por favor!",
+	vARCHIVO_INVALIDO : "El fichero que ha seleccionado no parece ser v\u00E1lido.",
+	vOTRA_EXTENSION : "El fichero tiene una extensi\u00F3n no v\u00E1lida. Recuerde, s\u00F3lo se permiten formatos de texto.",
+	vFICHERO_NORMAL : "Fichero seleccionado. Ya puede elegir el n\u00FAmero de premios y sortear.",
+	
+	vFICHERO_NOMBRES : "Fichero con nombres: ",
+	
+	vNOMBRE : "Nombre: ",
+	
+	//S2SORTEOS_AV
+	vHORA_SELECCIONADA : "Hora seleccionada: ",
+	vPremioPositivo: "Premio",
+	vPremioNegativo: "Castigo",
+	vNumPremioPositivo: "Nº de premios:  ",
+	vNumPremioNegativo: "Nº de castigos:  ",
+	vBORRAR_PREMIOS : "Borrar premios",
+	vBORRAR_CASTIGOS : "Borrar castigos",
+	
+	//MENU SUPERIOR
+	vmSorteos :'Información de sorteos en que puedes participar.',
+	vmSortea:  'Realiza tu propio sorteo aleatorio. Indica los participantes, el nº de premios y ¡sortea!',
+	vmLista:	'Ver la lista de sorteos guardados por otros.',
+	vmMisSorteos: 'Ver los sorteos que tú has guardado.',
+	vmAmigoInvisible: 'Organiza un Amigo Invisible enviando un mail.',
+	vmAleatorios: 'Utilidades varias para hacer acciones aleatorias. Amigo Invisible, Respuestas Aleatorias y Twitter Poemas.',
+	vmAvanzados: 'Sorteos avanzados. Guarda tu sorteo, publícalo, prográmalo, házlo privado, etc.',
+			
+	//S2 RECUPERACION
+	vCORREO_INVALIDO : " Dirección de correo inválida",
+	
+	//S2 RESPUESTAS
+	vSIONO : "sí o no",
+	vCANTIDAD : "nada, poco, algo, bastante o mucho",
+	vESCRIBE_PREGUNTA : "¡Escribe alguna pregunta!",
+	vCREEMOS_QUE : "Creemos que ",
+	
+	//S2 PUBSORTEO
+	vPUBNOMBRE : "Incluye un <strong>título para el sorteo</strong>. Intenta ser lo más descriptivo posible",
+	vPUBQUE : "¿En qué consiste el premio en este sorteo? Dí que se <strong>puede ganar</strong> para que la gente se anime a participar",
+	vPUBURL : "¿En qué <strong>página web</strong> se puede obtener la información completa sobre este sorteo? En caso de existir, inclúyela para que los participantes sepan donde está <strong>la web oficial del sorteo</strong>. Debe estar con el siguiente formato: <code>http://www.paginadelsorteo.com/</code>",
+	vPUBFECHA : "¿Cual es el <strong>último día</strong> en el que se puede participar en este sorteo? Es un dato importante que has de poner para que la gente conozca hasta cuando podrá participar.",
+	vPUBDESCRIPCION : "Esta es la parte <strong>más importante del sorteo</strong>. Incluye una descripción lo más detallada posible sobre bajo qué condiciones se celebrará este sorteo. Intenta ser descriptivo y no te dejes ningún dato importante sin escribir",
+	vPUBREQUISITO : "¿Qué es necesario para poder participar en este sorteo? ¿Hace falta registrarse en una web, comprar un producto, rellenar una encuesta...?",
+	vPUBTAGS : "Escribe las palabras más significativas de este sorteo. Cada etiqueta deberá estar <strong>separada por una coma</strong>. Por ejemplo: <code>septiembre 2009, registro web, entradas</code>",
+	vPUBSPAM: "El sorteo no debe tener más que un enlace a la propia página. No hagas spam.<br/>"+
+	"Describe claramente el premio y los requisitos para participar, "+
+	"no obligues a la gente a visitar tu página para informarse del sorteo, la visitarán si les interesa participar.",
+	vBORRARNOMBRES: "Borrar nombres"
+	
+};
